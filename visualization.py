@@ -1,7 +1,6 @@
 import pygame
 import sys
 import math
-from random import choice
 
 # Инициализация Pygame
 pygame.init()
@@ -12,8 +11,10 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Схема дороги с перекрестком и транспортом")
 #Дорога
 WIDTH_ROAD = math.ceil(WIDTH // 8) #100
+
 #Линия разделительных полос
 WIDTH_LINE = math.ceil(WIDTH_ROAD // 10) #10
+
 # Цвета
 GREEN = (34, 177, 76)
 GRAY = (128, 128, 128)
@@ -37,27 +38,52 @@ class Road:
     def __init__(self):
         pass
 
+    # Центрирование по ширине
     def Width_center(self, width: float) -> float:
         return (WIDTH - width) // 2
 
+    # Центрирование по высоте
     def Height_center(self, height: float) -> float:
         return (HEIGHT - height) // 2
+
+    # Разрешение движение на лево
+    def Move_allowed_left(self, x: float, y: float, Width_move: float = WIDTH_ROAD / 2):
+        pygame.draw.rect(window, WHITE,
+                         pygame.Rect(x,
+                                     y,
+                                     100,
+                                     100))
+
+    # Разрешение движение на прямо
+    def Move_allowed_straight(self):
+        pass
+
+    # Разрешение движение на право
+    def Move_allowed_right(self):
+        pass
+
+    # Общая команда для сбора выдачи разрешение на движение в ту или иную сторону
+    def Move_allowed(self):
+        self.Move_allowed_left(x=100, y=100)
+
     # Пешеходный переход
-    def draw_crosswalk(self, x, y, left_right: bool = True, count_line: int = WIDTH_LINE):
+    def draw_crosswalk(self, x: float, y: float, Width_crosswalk: float, left_right: bool = True, count_line: int = WIDTH_LINE):
         if left_right:
             for i in range(count_line):
                 pygame.draw.rect(window, WHITE,
-                                 pygame.Rect(x + i * WIDTH_ROAD / count_line + WIDTH_ROAD / count_line / 4,
+                                 pygame.Rect(x + i * Width_crosswalk / count_line + 2,
                                              y,
-                                             WIDTH_ROAD / count_line / 2,
+                                             Width_crosswalk / count_line / 2,
                                              WIDTH_ROAD / 3))
         else:
             for i in range(count_line):
                 pygame.draw.rect(window, WHITE,
                                  pygame.Rect(x,
-                                             y + i * WIDTH_ROAD / count_line + WIDTH_ROAD / count_line / 8,
+                                             y + i * Width_crosswalk / count_line + 2,
                                              WIDTH_ROAD / 3,
-                                             WIDTH_ROAD / count_line / 2))
+                                             Width_crosswalk / count_line / 2))
+
+    # Рисует дорогу линии на дороге
     def draw_line_on_road(self, WIDTH_PIXEL: float = 0, HEIGHT_PIXEL: float = 0, up_right: bool = False,
                           dotted: bool = False):
         list_dot = [0, WIDTH if WIDTH >= HEIGHT else HEIGHT]
@@ -73,45 +99,62 @@ class Road:
             #Слева направо
             for i in list_dot:
                 pygame.draw.rect(window, WHITE, pygame.Rect(WIDTH_PIXEL + i, HEIGHT_PIXEL, 2 * WIDTH_LINE, WIDTH_LINE))
-    def draw_road_left(self, crosswalk: bool = True, dotted: bool = False,count_lane: int = 2):
+    # Рисует дорогу слева
+    def draw_road_left(self, crosswalk: bool = True, dotted: bool = False,count_lane: int = 3):
+        Width_left = WIDTH_ROAD * count_lane / 2
         pygame.draw.rect(window, GRAY,
                          pygame.Rect(0,
-                                     self.Height_center(WIDTH_ROAD),
+                                     self.Height_center(Width_left),
                                      self.Width_center(WIDTH_ROAD),
-                                     WIDTH_ROAD))
-        if crosswalk == False:
+                                     Width_left))
+        if crosswalk:
             self.draw_crosswalk(x=self.Width_center(WIDTH_ROAD)-WIDTH_ROAD/3,
-                                y=self.Height_center(WIDTH_ROAD),
-                                left_right=False)
-    def draw_road_right(self, crosswalk: bool = False):
+                                y=self.Height_center(Width_left),
+                                Width_crosswalk=Width_left,
+                                left_right=False,
+                                count_line=math.ceil(WIDTH_LINE*count_lane/2))
+    # Рисует дорогу справа
+    def draw_road_right(self, crosswalk: bool = True,count_lane: int = 6):
+        Width_right = WIDTH_ROAD * count_lane / 2
         pygame.draw.rect(window, GRAY,
                          pygame.Rect(self.Width_center(-WIDTH_ROAD),
-                                     self.Height_center(WIDTH_ROAD),
+                                     self.Height_center(Width_right),
                                      WIDTH//2,
-                                     WIDTH_ROAD))
-        if crosswalk == True:
+                                     Width_right))
+        if crosswalk:
             self.draw_crosswalk(x=self.Width_center(WIDTH_ROAD) + WIDTH_ROAD,
-                                y=self.Height_center(WIDTH_ROAD),
-                                left_right=False)
-    def draw_road_up(self, crosswalk: bool = False):
+                                y=self.Height_center(Width_right),
+                                Width_crosswalk=Width_right,
+                                left_right=False,
+                                count_line=math.ceil(WIDTH_LINE * count_lane / 2))
+    # Рисует дорогу сверху
+    def draw_road_up(self, crosswalk: bool = True,count_lane: int = 6):
+        Width_up = WIDTH_ROAD * count_lane / 2
         pygame.draw.rect(window, GRAY,
-                         pygame.Rect(self.Width_center(WIDTH_ROAD),
+                         pygame.Rect(self.Width_center(Width_up),
                                      0,
-                                     WIDTH_ROAD,
+                                     Width_up,
                                      self.Height_center(WIDTH_ROAD)))
 
-        if crosswalk == True:
-            self.draw_crosswalk(x=self.Width_center(WIDTH_ROAD),
-                                y=self.Height_center(WIDTH_ROAD) - WIDTH_ROAD/3)
-    def draw_road_down(self, crosswalk: bool = False, ):
+        if crosswalk:
+            self.draw_crosswalk(x=self.Width_center(Width_up),
+                                y=self.Height_center(WIDTH_ROAD) - WIDTH_ROAD/3,
+                                Width_crosswalk=Width_up,
+                                count_line=math.ceil(WIDTH_LINE * count_lane / 2))
+    # Рисует дорогу снизу
+    def draw_road_down(self, crosswalk: bool = True,count_lane: int = 6):
+        Width_down = WIDTH_ROAD * count_lane / 2
         pygame.draw.rect(window, GRAY,
-                         pygame.Rect(self.Width_center(WIDTH_ROAD),
+                         pygame.Rect(self.Width_center(Width_down),
                                      self.Height_center(-WIDTH_ROAD),
-                                     WIDTH_ROAD,
-                                     HEIGHT))
+                                     Width_down,
+                                     Width_down))
         if crosswalk == True:
-            self.draw_crosswalk(x=self.Width_center(WIDTH_ROAD),
-                                y=self.Height_center(WIDTH_ROAD) + WIDTH_ROAD)
+            self.draw_crosswalk(x=self.Width_center(Width_down),
+                                y=self.Height_center(WIDTH_ROAD) + WIDTH_ROAD,
+                                Width_crosswalk=Width_down,
+                                count_line=math.ceil(WIDTH_LINE * count_lane / 2))
+    # Рисует квадрат по центру
     def draw_road_center(self,max_line_up_down: int = 2, max_line_left_right: int = 2):
         pygame.draw.rect(window, GRAY,
                          pygame.Rect(self.Width_center(WIDTH_ROAD*max_line_left_right//2),
@@ -120,12 +163,14 @@ class Road:
                                      WIDTH_ROAD*max_line_up_down//2))
 
 
+    # cross_T выбирается сторона которую не будет рисовать (варианты)['up','down','left','right']
     def draw_road(self, center_x: int = WIDTH//2 - WIDTH_ROAD//2, center_y: int = HEIGHT//2 - WIDTH_ROAD//2,
                   count_lane_up: int = 2, dotted_up: list = [],
                   count_lane_down: int = 1, dotted_down: list = [],
                   count_lane_right: int = 1, dotted_right: list = [],
                   count_lane_left: int = 1, dotted_left: list = [],
-                  cross: bool = False, cross_T: bool = True):
+                  cross: bool = False,
+                  cross_T: bool = True, line_T: str = 'up'):
         # Основная дорога
         if count_lane_left < 0:
             WIDTH_LEFT = 1/2 * count_lane_left * WIDTH_ROAD
@@ -146,24 +191,21 @@ class Road:
         if cross:
             # Крестообразная
             pygame.draw.rect(window, GRAY, pygame.Rect(self.Width_center(WIDTH_ROAD), 0, WIDTH_ROAD, HEIGHT))
-            self.draw_line_on_road(HEIGHT_PIXEL=0, WIDTH_PIXEL=self.Width_center(WIDTH_LINE-50), up_right=True)
+            self.draw_line_on_road(HEIGHT_PIXEL=0, WIDTH_PIXEL=self.Width_center(WIDTH_LINE), up_right=True)
             pygame.draw.rect(window, GRAY, pygame.Rect(0, self.Height_center(WIDTH_ROAD), WIDTH, WIDTH_ROAD))
             self.draw_line_on_road(HEIGHT_PIXEL=self.Height_center(WIDTH_LINE), WIDTH_PIXEL=0, dotted=True)
         if cross_T:
-            #self.draw_road_center()
+            pass
+            # if 'up'!=line_T:
+            #     self.draw_road_up()
+            # if 'down' != line_T:
+            #     self.draw_road_down()
+            # if 'left'!=line_T:
+            #     self.draw_road_left()
+            # if 'right'!=line_T:
+            #     self.draw_road_right()
+            # self.draw_road_center()
 
-            self.draw_road_right()
-            #self.draw_road_left()
-
-            #self.draw_road_up()
-            #self.draw_road_down()
-
-
-
-            # pygame.draw.rect(window, GRAY, pygame.Rect(self.Width_center(WIDTH_ROAD), HEIGHT//2+WIDTH_ROAD//2, WIDTH_ROAD, HEIGHT))
-            # self.draw_line_on_road(HEIGHT_PIXEL=0, WIDTH_PIXEL=self.Width_center(WIDTH_LINE), up_right=True,dotted=True)
-            # pygame.draw.rect(window, GRAY, pygame.Rect(0, self.Height_center(WIDTH_ROAD), WIDTH, WIDTH_ROAD))
-            # self.draw_line_on_road(HEIGHT_PIXEL=self.Height_center(WIDTH_LINE), WIDTH_PIXEL=0, dotted=False)
         #Центр
 
         max_up, max_left = 1, 1

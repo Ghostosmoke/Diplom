@@ -47,12 +47,23 @@ class Road:
         return (HEIGHT - height) // 2
 
     # Разрешение движение на лево
-    def Move_allowed_left(self, x: float, y: float, Width_move: float = WIDTH_ROAD / 2):
-        pygame.draw.rect(window, WHITE,
-                         pygame.Rect(x,
-                                     y,
-                                     100,
-                                     100))
+    def Move_allowed_left(self, x: float, y: float, left_right: bool = True):
+        w_5=WIDTH_ROAD/5
+        w_10=WIDTH_ROAD/10
+
+        if left_right:
+            vertices = [(x + w_5, y - 2 * w_10), (x, y - w_10), (x + 2 * w_5, y - w_10)]
+            pygame.draw.rect(window, WHITE,
+                             pygame.Rect(x,
+                                         y,
+                                         w_5,
+                                         w_10))
+            pygame.draw.rect(window, WHITE,
+                             pygame.Rect(x+w_5,
+                                         y-w_10,
+                                         w_10,
+                                         w_5))
+            pygame.draw.polygon(window,WHITE,vertices)
 
     # Разрешение движение на прямо
     def Move_allowed_straight(self):
@@ -205,7 +216,7 @@ class Road:
             # if 'right'!=line_T:
             #     self.draw_road_right()
             # self.draw_road_center()
-
+        self.Move_allowed_left(100,100)
         #Центр
 
         max_up, max_left = 1, 1

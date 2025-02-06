@@ -14,7 +14,9 @@ WIDTH_ROAD = math.ceil(WIDTH // 8) #100
 
 #Линия разделительных полос
 WIDTH_LINE = math.ceil(WIDTH_ROAD // 10) #10
-
+#Для разрешение поворота
+w_5=WIDTH_ROAD/5
+w_10=WIDTH_ROAD/10
 # Цвета
 GREEN = (34, 177, 76)
 GRAY = (128, 128, 128)
@@ -46,36 +48,55 @@ class Road:
     def Height_center(self, height: float) -> float:
         return (HEIGHT - height) // 2
 
-    # Разрешение движение на лево
-    def Move_allowed_left(self, x: float, y: float, left_right: bool = True):
-        w_5=WIDTH_ROAD/5
-        w_10=WIDTH_ROAD/10
 
-        if left_right:
-            vertices = [(x + w_5, y - 2 * w_10), (x, y - w_10), (x + 2 * w_5, y - w_10)]
+    def Move_allowed(self, x: float, y: float, angle: int = 180):
+        #Стрелка налево
+        if angle == 270:
+            vertices = [(x - w_5*7/5, y - w_10 * 3 / 5), (x - w_10, y - w_5), (x - w_10, y + w_10)]
+            pygame.draw.rect(window, WHITE,
+                             pygame.Rect(x - w_5 / 2,
+                                         y - w_10,
+                                         w_5,
+                                         w_10))
+            pygame.draw.polygon(window, WHITE, vertices)
+        #Стрелка вниз
+        if angle == 180:
+            vertices = [(x + w_10 / 2, y + w_5*3/2), (x - w_10, y + w_5*2/3), (x + w_5, y + w_5*2/3)]
             pygame.draw.rect(window, WHITE,
                              pygame.Rect(x,
                                          y,
-                                         w_5,
-                                         w_10))
-            pygame.draw.rect(window, WHITE,
-                             pygame.Rect(x+w_5,
-                                         y-w_10,
                                          w_10,
                                          w_5))
-            pygame.draw.polygon(window,WHITE,vertices)
+            pygame.draw.polygon(window, WHITE, vertices)
+        #Стрелка вправо
+        if angle == 90:
+            vertices = [(x + w_5 * 2, y - w_10 * 3 / 5), (x + w_5, y - w_5), (x + w_5, y + w_10)]
+            pygame.draw.rect(window, WHITE,
+                             pygame.Rect(x + w_5 / 100,
+                                         y - w_10,
+                                         w_5,
+                                         w_10))
 
-    # Разрешение движение на прямо
-    def Move_allowed_straight(self):
-        pass
+            pygame.draw.polygon(window, WHITE, vertices)
+        #Стрелка вверх
+        if angle == 0:
+            vertices = [(x + w_10 / 2, y - 2 * w_5), (x - w_10, y - w_5), (x + w_5, y - w_5)]
 
-    # Разрешение движение на право
-    def Move_allowed_right(self):
-        pass
+            pygame.draw.rect(window, WHITE,
+                             pygame.Rect(x,
+                                         y - 2 * w_10,
+                                         w_10,
+                                         w_5))
+            pygame.draw.polygon(window, WHITE, vertices)
 
     # Общая команда для сбора выдачи разрешение на движение в ту или иную сторону
-    def Move_allowed(self):
-        self.Move_allowed_left(x=100, y=100)
+    def Move_allowed_all(self,x: float, y: float, right: bool = False, left: bool = False, straight: bool = False):
+        if right:
+            self.Move_allowed_right(x, y)
+        if left:
+            self.Move_allowed_left(x, y)
+        if straight:
+            self.Move_allowed_straight(x,y)
 
     # Пешеходный переход
     def draw_crosswalk(self, x: float, y: float, Width_crosswalk: float, left_right: bool = True, count_line: int = WIDTH_LINE):
@@ -216,7 +237,11 @@ class Road:
             # if 'right'!=line_T:
             #     self.draw_road_right()
             # self.draw_road_center()
-        self.Move_allowed_left(100,100)
+        self.Move_allowed(100, 100, angle=270)
+        self.Move_allowed(100, 100, angle=180)
+        # self.Move_allowed(100, 100, angle=90)
+        # self.Move_allowed(100, 100, angle=0)
+
         #Центр
 
         max_up, max_left = 1, 1

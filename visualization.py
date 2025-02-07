@@ -49,7 +49,7 @@ class Road:
         return (HEIGHT - height) // 2
 
 
-    def Move_allowed(self, x: float, y: float, angle: int = 180):
+    def Move_allowed(self, x: float, y: float, angle: int):
         #Стрелка налево
         if angle == 270:
             vertices = [(x - w_5*7/5, y - w_10 * 3 / 5), (x - w_10, y - w_5), (x - w_10, y + w_10)]
@@ -90,13 +90,9 @@ class Road:
             pygame.draw.polygon(window, WHITE, vertices)
 
     # Общая команда для сбора выдачи разрешение на движение в ту или иную сторону
-    def Move_allowed_all(self,x: float, y: float, right: bool = False, left: bool = False, straight: bool = False):
-        if right:
-            self.Move_allowed_right(x, y)
-        if left:
-            self.Move_allowed_left(x, y)
-        if straight:
-            self.Move_allowed_straight(x,y)
+    def Move_allowed_all(self,x: float, y: float, angle: list):
+        for i in angle:
+            self.Move_allowed(x,y,angle=i)
 
     # Пешеходный переход
     def draw_crosswalk(self, x: float, y: float, Width_crosswalk: float, left_right: bool = True, count_line: int = WIDTH_LINE):
@@ -194,7 +190,6 @@ class Road:
                                      WIDTH_ROAD*max_line_left_right//2,
                                      WIDTH_ROAD*max_line_up_down//2))
 
-
     # cross_T выбирается сторона которую не будет рисовать (варианты)['up','down','left','right']
     def draw_road(self, center_x: int = WIDTH//2 - WIDTH_ROAD//2, center_y: int = HEIGHT//2 - WIDTH_ROAD//2,
                   count_lane_up: int = 2, dotted_up: list = [],
@@ -203,23 +198,7 @@ class Road:
                   count_lane_left: int = 1, dotted_left: list = [],
                   cross: bool = False,
                   cross_T: bool = True, line_T: str = 'up'):
-        # Основная дорога
-        if count_lane_left < 0:
-            WIDTH_LEFT = 1/2 * count_lane_left * WIDTH_ROAD
-            pygame.draw.rect(window, GRAY, pygame.Rect(self.Width_center(WIDTH_LEFT+WIDTH_ROAD), 0,
-                                                       WIDTH_LEFT+WIDTH_ROAD, HEIGHT/2))
-            for i in range(count_lane_left):
-                bool_left = False
-                if i in dotted_left:
-                    bool_left = True
-                self.draw_line_on_road(HEIGHT_PIXEL=0, WIDTH_PIXEL=self.Width_center(WIDTH_LINE), up_right=True,
-                                       dotted=bool_left)
-        if count_lane_right > 0:
-            pass
-        if count_lane_up > 0:
-            pass
-        if count_lane_down > 0:
-            pass
+        
         if cross:
             # Крестообразная
             pygame.draw.rect(window, GRAY, pygame.Rect(self.Width_center(WIDTH_ROAD), 0, WIDTH_ROAD, HEIGHT))
@@ -237,25 +216,6 @@ class Road:
             # if 'right'!=line_T:
             #     self.draw_road_right()
             # self.draw_road_center()
-        self.Move_allowed(100, 100, angle=270)
-        self.Move_allowed(100, 100, angle=180)
-        # self.Move_allowed(100, 100, angle=90)
-        # self.Move_allowed(100, 100, angle=0)
-
-        #Центр
-
-        max_up, max_left = 1, 1
-        if count_lane_up > 1 or count_lane_down > 1:
-            max_up = max(count_lane_up, count_lane_down)
-        if count_lane_left > 1 or count_lane_right > 1:
-            max_left = max(count_lane_left, count_lane_right)
-        #pygame.draw.rect(window, RED, pygame.Rect(center_x,center_y, WIDTH_ROAD, self.Height_center(max_up * WIDTH_ROAD + 2*WIDTH_ROAD)))
-
-
-
-
-
-
 
 # Класс для машины
 class Car:

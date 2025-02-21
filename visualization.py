@@ -203,10 +203,10 @@ class Road:
 
     # cross_T выбирается сторона которую не будет рисовать (варианты)['up','down','left','right']
     def draw_road(self,
-                  count_lane_up: int = 3, count_lane_down: int = 4, count_lane_right: int = 6, count_lane_left: int = 4,
+                  count_lane_up: int = 4, count_lane_down: int = 4, count_lane_right: int = 2, count_lane_left: int = 4,
                   dotted_line: list = [0, 0, 0, 0],
                   cross: bool = True,
-                  cross_T: bool = False, line_T: str = 'up', crosswalk: list = [True, True, True, True]):
+                  cross_T: bool = False, line_T: str = 'up', crosswalk: list = [False,False,False,False]):
 
         if cross:
 
@@ -214,13 +214,13 @@ class Road:
             max_vertical = max(count_lane_right, count_lane_left)
 
             self.draw_road_up(crosswalk[0], count_lane_up)
-            # for i in range(count_lane_up-1):
-            #     self.draw_line_vertical(WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_up / 2 - i - 1)) - WIDTH_LINE//2,
-            #                       HEIGHT_PIXEL=0, dotted=True)
-            #     if dotted_line[0] == i:
-            #         self.draw_line_vertical(
-            #             WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_up / 2 - i - 1)) - WIDTH_LINE // 2,
-            #             HEIGHT_PIXEL=0, dotted=False)
+            for i in range(count_lane_up-1):
+                self.draw_line_vertical(WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_up / 2 - i - 1)) - WIDTH_LINE//2,
+                                  HEIGHT_PIXEL=0, dotted=True)
+                if dotted_line[0] == i:
+                    self.draw_line_vertical(
+                        WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_up / 2 - i - 1)) - WIDTH_LINE // 2,
+                        HEIGHT_PIXEL=0, dotted=False)
 
             self.draw_road_right(crosswalk[1], count_lane_right, width_crosswalk=(max_vertical-2)*WIDTH_LINE)
             for i in range(count_lane_right-1):
@@ -234,13 +234,13 @@ class Road:
                         HEIGHT_PIXEL=self.Height_center(WIDTH_ROAD * (count_lane_right / 2 - i - 1)) - WIDTH_LINE // 2)
 
             self.draw_road_down(crosswalk[2], count_lane_down)
-            # for i in range(count_lane_down-1):
-            #     self.draw_line_vertical(WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_down / 2 - i - 1)) - WIDTH_LINE//2,
-            #                       HEIGHT_PIXEL=self.Height_center(WIDTH_ROAD//2), dotted=True)
-            #     if dotted_line[2] == i:
-            #         self.draw_line_vertical(
-            #             WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_down / 2 - i - 1)) - WIDTH_LINE // 2,
-            #             HEIGHT_PIXEL=self.Height_center(WIDTH_ROAD//2), dotted=False)
+            for i in range(count_lane_down-1):
+                self.draw_line_vertical(WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_down / 2 - i - 1)) - WIDTH_LINE//2,
+                                  HEIGHT_PIXEL=self.Height_center(WIDTH_ROAD//2), dotted=True)
+                if dotted_line[2] == i:
+                    self.draw_line_vertical(
+                        WIDTH_PIXEL=self.Width_center(WIDTH_ROAD * (count_lane_down / 2 - i - 1)) - WIDTH_LINE // 2,
+                        HEIGHT_PIXEL=self.Height_center(WIDTH_ROAD//2), dotted=False)
 
             self.draw_road_left(crosswalk[3], count_lane_left)
             for i in range(count_lane_left - 1):

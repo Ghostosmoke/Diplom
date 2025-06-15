@@ -4,13 +4,17 @@ import math
 import numpy as np
 
 from pprint import pprint
+
+from pygame.examples.sprite_texture import running
+
 # Инициализация Pygame
 pygame.init()
-
 # Определение размеров окна
-WIDTH, HEIGHT = 1500, 1000
-window = pygame.display.set_mode((WIDTH, HEIGHT))
+WIDTH, HEIGHT = 800, 600
+window = pygame.display.set_mode((WIDTH , HEIGHT))
 pygame.display.set_caption("Схема дороги с перекрестком и транспортом")
+
+
 # Дорога
 WIDTH_ROAD = math.ceil(WIDTH // 8)  # 100
 
@@ -225,8 +229,8 @@ class Road:
                   dotted_line: list = [0, 0, 0, 0],
                   cross: bool = False,
                   cross_T: bool = True, line_T: str = 'up', crosswalk: list = [False,False,False,False],alloweds: list = []):
-        allowed = [np.zeros((count_lane_up,1)),np.zeros((count_lane_right,1))
-            ,np.zeros((count_lane_down,1)),np.zeros((count_lane_left,1))]
+        # allowed = [np.zeros((count_lane_up,1)),np.zeros((count_lane_right,1))
+        #     ,np.zeros((count_lane_down,1)),np.zeros((count_lane_left,1))]
         if cross:
 
             max_horizontal = max(count_lane_up, count_lane_down)
@@ -369,6 +373,7 @@ class TrafficLight:
 
 # Основная функция
 def main():
+
     clock = pygame.time.Clock()
 
     road = Road()
@@ -384,16 +389,20 @@ def main():
     #     Car(240, 315, (255, 120, 0)),
     #     Car(415, 385, (0, 255, 0), left_right=False),
     #     Car(510, 260, (255, 0, 0))]
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+
+                running = False
+
+                # sys.exit()
 
         window.fill(GREEN)  # Заливка фона травой
 
         # Отрисовка дороги и перекрестка
         road.draw_road()
+
         # UP
         # road.draw_crosswalk(353, 215)
         # LEFT
@@ -416,6 +425,6 @@ def main():
         pygame.display.flip()  # Обновление дисплея
         clock.tick(1)  # Ограничение FPS для смены светофора каждые 2 секунды
 
-
+pygame.quit()
 if __name__ == "__main__":
     main()

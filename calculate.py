@@ -3,13 +3,12 @@ from operator import mul
 from math import factorial
 import numpy as np
 from pprint import pprint
-import pygame
-import visualization
+# import pygame
+# from visualization import Road,WIDTH,HEIGHT,GREEN
 import sys
 
 def R(n: float , T_0: float , lambda_list: float):
     return 1
-from visualization import Road,WIDTH,HEIGHT,GREEN
 '''
 L - число потоков которые надо пересечь
 lambda_ - параметры этих потоков, которые распределены по специальному закону Эрланга порядков k[1], …, k[L]  соответственно;
@@ -24,7 +23,7 @@ def AverageWaitingTime(L: int , k: list , T_0: float , lambda_: list):
     return m_z
 
 
-def AverageWaitingQueue(lambda_0: float , k: float , m_z: float , n: int , s: int) -> float:
+def AverageWaitingQueue(lambda_0: float , k: int , m_z: float , n: int , s: int) -> float:
     alf = lambda_0 * m_z / k
     M = ((alf ** n / factorial(n) * sum([j * (alf / n) ** j for j in range(0 , s)]))
          / (sum([alf ** j / factorial(j) for j in range(0 , n)])
@@ -32,26 +31,26 @@ def AverageWaitingQueue(lambda_0: float , k: float , m_z: float , n: int , s: in
     return M
 
 
-def AverageDelayUnregulatedCross(lambda_0: float , T_0: float , lambda_: list, k: float , m_z: float , n: int , s: int , L: int , k_list: list):
+def AverageDelayUnregulatedCross(lambda_0: float , T_0: float , lambda_: list, k: int , m_z: float , n: int , s: int , L: int , k_list: list):
     W_H = AverageWaitingTime(L , k_list, T_0 , lambda_) * AverageWaitingQueue(lambda_0 , k , m_z , n , s)
     return W_H
 
 def main():
-    def main_road(road):
-        clock = pygame.time.Clock()
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    # pygame.quit()
-                    # sys.exit()
-
-            visualization.window.fill(GREEN)  # Заливка фона травой
-            road.draw_road()
-            pygame.display.flip()  # Обновление дисплея
-            clock.tick(1)
-        pygame.quit()
+    # def main_road(road):
+    #     clock = pygame.time.Clock()
+    #     running = True
+    #     while running:
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 running = False
+    #                 # pygame.quit()
+    #                 # sys.exit()
+    #
+    #         visualization.window.fill(GREEN)  # Заливка фона травой
+    #         road.draw_road()
+    #         pygame.display.flip()  # Обновление дисплея
+    #         clock.tick(1)
+    #     pygame.quit()
     print('''Ввод данных происходит по часовой стрелке начиная с дороги которая находится сверху''')
     kol_road = int(input('Введите количество полос, где крестообразный = 4, T-образный = 3: '))
     line_T = None
@@ -62,14 +61,14 @@ def main():
         4:'left'
     }
     kol_lane_massive=[]
-    road=Road()
+    # road=Road()
     massive_road_lane = []
     if kol_road == 3:
-        print('Вы вели Т - образный перекресток. ')
+        print('Вы ввели Т - образный перекресток. ')
         line_T = str(input('Укажите какой полосы не будет из этих четырех вариантов(up,right,down,left): '))
 
     if kol_road == 4:
-        print('Вы вели Крестообразный перекресток. ')
+        print('Вы ввели Крестообразный перекресток. ')
 
     print('Ввод данных по количеству полос')
     for dict in dict_number:
@@ -83,12 +82,14 @@ def main():
                 massive_road_lane[-1].append(0)
         else:
             kol_lane_massive.append(0)
+            massive_road_lane.append([])
+    massive_intensity = massive_road_lane[:]
     pprint(massive_road_lane)
-    main_road()
-    if line_T == None:
-        road.draw_road(kol_lane_massive[0] , kol_lane_massive[1] , kol_lane_massive[2] , kol_lane_massive[3],cross=True)
-    else:
-        road.draw_road(kol_lane_massive[0] , kol_lane_massive[1] , kol_lane_massive[2] , kol_lane_massive[3],cross_T=True,line_T=line_T)
+    # main_road()
+    # if line_T == None:
+    #     road.draw_road(kol_lane_massive[0] , kol_lane_massive[1] , kol_lane_massive[2] , kol_lane_massive[3],cross=True)
+    # else:
+    #     road.draw_road(kol_lane_massive[0] , kol_lane_massive[1] , kol_lane_massive[2] , kol_lane_massive[3],cross_T=True,line_T=line_T)
     print('Ввод данных на возможные направления для данной полосы')
     print('Введите данные для направления движения (0 = вверх, 90 = вправо, 180 = вниз, 270 = влево)')
     kol = 1
@@ -97,17 +98,24 @@ def main():
             print('Введите значение или значения через пробел для',kol,'направления: ')
             kol +=1
             road_lane[i] = list(map(int, input().split()))
-            print(road_lane)
-    pprint(massive_road_lane)
 
-    print('Ввод интенсивности на каждую полосу')
-    print('Если нет интенсивности на поворот ')
+    pprint(massive_road_lane)
+    kol = 1
+    print('Введите интенсивность на каждое направление движения')
+    print('Если нет интенсивности на поворот = 0')
+    for intensity in massive_intensity:
+        for j in range(len(intensity)):
+            print('Введите значение или значения через пробел для', kol, 'направления: ')
+            kol += 1
+            intensity[j] = list(map(int, input().split()))
+    print(massive_intensity)
+
 
     # m_z=AverageWaitingTime(k=2,)
     # alf=m_z * lambda_[1] / k[1]
     # if alf<1:
-    #     W_H =
+    #     W_H = m_z * (1 + alf / (1 - alf))
     # else:
-    #     alf=0.9
+    #     alf = 0.9
 if __name__ == "__main__":
     main()

@@ -5,7 +5,6 @@ import numpy as np
 
 from pprint import pprint
 
-from pygame.examples.sprite_texture import running
 
 # Инициализация Pygame
 pygame.init()
@@ -396,13 +395,13 @@ def main():
 
                 running = False
 
+
                 # sys.exit()
 
         window.fill(GREEN)  # Заливка фона травой
 
         # Отрисовка дороги и перекрестка
         road.draw_road()
-
         # UP
         # road.draw_crosswalk(353, 215)
         # LEFT
@@ -424,7 +423,7 @@ def main():
 
         pygame.display.flip()  # Обновление дисплея
         clock.tick(1)  # Ограничение FPS для смены светофора каждые 2 секунды
-
-pygame.quit()
+    pygame.quit()
 if __name__ == "__main__":
+    main()
     main()

@@ -22,27 +22,9 @@ This project provides a comprehensive tool for simulating, analyzing, and optimi
 - pip package manager
 
 ### Steps
-1. Clone the repository:
+1. Clone the repository and install:
 ```bash
 git clone https://github.com/Ghostosmoke/Diplom.git
-cd Diplom
 
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
 
-
-
-📊 Output Examples
-The simulation generates:
-
-Traffic flow efficiency reports
-
-Vehicle delay statistics
-
-Intersection capacity analysis
-
-Graphical schematics of optimal movement patterns
-
-Animation of vehicle interactions

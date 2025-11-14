@@ -24,7 +24,7 @@ This project provides a comprehensive tool for simulating, analyzing, and optimi
 ### Steps
 1. Clone the repository and install:
 ```bash
-git clone https://github.com/Ghostosmoke/Diplom.git
+git clone https://github.com/Ghostosmoke/TrafficFlowIntersection.git
 
 pip install -r requirements.txt
 
